@@ -1,0 +1,7 @@
+adult.csv为初始数据
+
+attribute.csv为全部特征属性
+
+processed_adult.csv为处理过的数据
+
+processed_adult2.csv为删除capital-gain 和 capital-loss 和 fnlwgt 的数据

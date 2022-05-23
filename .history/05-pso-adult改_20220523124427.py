@@ -81,7 +81,7 @@ class PSO:
         for i in range(self.size):
             for j in range(self.dimension):
                 self.x[i][j] = random.uniform(self.bound[0][j], self.bound[1][j])
-                self.v[i][j] = random.uniform(self.v_low, self.v_high)
+                self.v[i][j] = random.uniform(self.v_low[j], self.v_high[j])
             self.p_best[i] = self.x[i]  # 储存最优的个体
             fit = self.fitness(self.p_best[i])
             # 做出修改
@@ -102,8 +102,8 @@ class PSO:
 
 
     def update(self, size):
-        c1 = 2.0  # 学习因子
-        c2 = 2.0
+        c1 = 1  # 学习因子
+        c2 = 1
         w = 0.8  # 自身权重因子
         for i in range(size):
             # 更新速度(核心公式)
@@ -111,10 +111,10 @@ class PSO:
                     self.p_best[i] - self.x[i]) + c2 * random.uniform(0, 1) * (self.g_best - self.x[i])
             # 速度限制
             for j in range(self.dimension):
-                if self.v[i][j] < self.v_low:
-                    self.v[i][j] = self.v_low
-                if self.v[i][j] > self.v_high:
-                    self.v[i][j] = self.v_high
+                if self.v[i][j] < self.v_low[j]:
+                    self.v[i][j] = self.v_low[j]
+                if self.v[i][j] > self.v_high[j]:
+                    self.v[i][j] = self.v_high[j]
 
             # 更新位置
             self.x[i] = self.x[i] + self.v[i]
@@ -157,11 +157,13 @@ class PSO:
 
 
 if __name__ == '__main__':
-    MAX_Generation = 10
+    MAX_Generation = 5
     Population = 30
     dimension = 3
-    v_low = -1
-    v_high = 1
+    # v_low = -1
+    # v_high = 1
+    v_low = [-1,-0.01,-0.1]
+    v_high = [1,0.01,0.1]
     # [n_estimators, learning_rate, algorithm]:
     BOUNDS_LOW =  [  1, 0.01, 0]
     BOUNDS_HIGH = [100, 1.00, 1]

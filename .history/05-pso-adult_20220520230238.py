@@ -20,14 +20,11 @@ class HyperparameterTuningGenetic:
         self.kfold = model_selection.KFold(n_splits=self.NUM_FOLDS, shuffle=True,random_state=self.randomSeed)
 
     def initAdultDataset(self):
-        url = 'processed_adult2.csv'
+        url = 'processed_adult.csv'
 
-        # self.data = read_csv(url, header=None, usecols=range(0, 15))
-        # self.X = self.data.iloc[:, 0:13]
-        # self.y = self.data.iloc[:, 14]
-        self.data = read_csv(url, header=None, usecols=range(0, 12))
-        self.X = self.data.iloc[:, 0:10]
-        self.y = self.data.iloc[:, 11]
+        self.data = read_csv(url, header=None, usecols=range(0, 15))
+        self.X = self.data.iloc[:, 0:13]
+        self.y = self.data.iloc[:, 14]
 
     # ADABoost [n_estimators, learning_rate, algorithm]:
     # "n_estimators": integer
@@ -158,10 +155,10 @@ class PSO:
 
 if __name__ == '__main__':
     MAX_Generation = 10
-    Population = 30
+    Population = 20
     dimension = 3
-    v_low = -1
-    v_high = 1
+    v_low = -0.5
+    v_high = 0.5
     # [n_estimators, learning_rate, algorithm]:
     BOUNDS_LOW =  [  1, 0.01, 0]
     BOUNDS_HIGH = [100, 1.00, 1]

@@ -160,8 +160,8 @@ if __name__ == '__main__':
     MAX_Generation = 10
     Population = 30
     dimension = 3
-    v_low = -1
-    v_high = 1
+    v_low = -3
+    v_high = 3
     # [n_estimators, learning_rate, algorithm]:
     BOUNDS_LOW =  [  1, 0.01, 0]
     BOUNDS_HIGH = [100, 1.00, 1]

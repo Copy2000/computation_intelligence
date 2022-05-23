@@ -142,17 +142,19 @@ class PSO:
         best = []
         self.final_best = np.array([1, 0.5, 0])
         start_time = time.time()
+        i=0
         for gen in range(self.time):
             self.update(self.size)
             if self.fitness(self.g_best) > self.fitness(self.final_best):
                 self.final_best = self.g_best.copy()
+            print("第",i+1,"次迭代")
             print('当前最佳位置：{}'.format(self.final_best))
             temp = self.fitness(self.final_best)
             print('当前的最佳适应度：{}'.format(temp))
             best.append(temp)
         t = [i for i in range(self.time)]
         end_time = time.time()
-        print("time cost:\t s", end_time-start_time)
+        print("time cost:\t", end_time-start_time,'\ts')
 
         plt.figure()
         plt.plot(t, best, color='red', marker='.', ms=15)
@@ -168,8 +170,8 @@ class PSO:
         
 
 if __name__ == '__main__':
-    MAX_Generation = 3
-    Population = 100
+    MAX_Generation = 50
+    Population = 20
     dimension = 3
     v_low = -1
     v_high = 1
@@ -184,7 +186,8 @@ if __name__ == '__main__':
     print("begin draw pso")
     print(np.array(X_list).shape)
     print(np.array(V_list).shape)
-
+    np.save("50_20X",arr=np.array(X_list))
+    np.save("50_20V",arr=np.array(V_list))
     fig, ax = plt.subplots(1, 1)
     ax.set_title('title', loc='center')
     line = ax.plot([], [], 'b.')
@@ -194,15 +197,12 @@ if __name__ == '__main__':
     plt.ion()
     p = plt.show()
     def update_scatter(frame):
-        # i, j = frame // 10, frame % 10
-        # ax.set_title('iter = ' + str(i))
-        # X_tmp = X_list[i] + V_list[i] * j / 10.0
-        i= frame
+        i, j = frame // 10, frame % 10
         ax.set_title('iter = ' + str(i))
-        X_tmp = X_list[i] + V_list[i]
+        X_tmp = X_list[i] + V_list[i] * j / 10.0
         plt.setp(line, 'xdata', X_tmp[:, 0], 'ydata', X_tmp[:, 1])
         return line
-    ani = FuncAnimation(fig, update_scatter, blit=True, interval=25, frames=3)
+    ani = FuncAnimation(fig, update_scatter, blit=True, interval=50, frames=100)
     ani.save('pso.gif',writer='pillow')
     # n_estimators=self.xall[]
     # learning_rate

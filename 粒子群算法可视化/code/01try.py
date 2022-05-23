@@ -22,14 +22,16 @@ print('best_x is ', pso.gbest_x, 'best_y is', pso.gbest_y)
 
 record_value = pso.record_value
 X_list, V_list = record_value['X'], record_value['V']
+print(np.array(X_list).shape)
+print(np.array(V_list).shape)
 
 fig, ax = plt.subplots(1, 1)
 ax.set_title('title', loc='center')
 line = ax.plot([], [], 'b.')
 
-X_grid, Y_grid = np.meshgrid(np.linspace(-1.0, 1.0, 20), np.linspace(-1.0, 1.0, 20))
-Z_grid = demo_func((X_grid, Y_grid))
-ax.contour(X_grid, Y_grid, Z_grid, 20)
+# X_grid, Y_grid = np.meshgrid(np.linspace(-1.0, 1.0, 20), np.linspace(-1.0, 1.0, 20))
+# Z_grid = demo_func((X_grid, Y_grid))
+# ax.contour(X_grid, Y_grid, Z_grid, 20)
 
 ax.set_xlim(-1, 1)
 ax.set_ylim(-1, 1)

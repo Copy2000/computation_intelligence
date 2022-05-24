@@ -31,6 +31,19 @@
    >
    > ![image-20220524104037648](wine数据集分类结果/image-20220524104037648.png)
 
+2. > POPULATION_SIZE = 10
+   > P_CROSSOVER = 0.9  # probability for crossover
+   > P_MUTATION = 0.5   # probability for mutating an individual
+   > MAX_GENERATIONS = 10
+   > HALL_OF_FAME_SIZE = 5
+   > CROWDING_FACTOR = 20.0  # crowding factor for crossover and mutation
+
+   > Best solution is: 
+   > params =  (67, 0.34684801135281196, 'SAMME')
+   > Accuracy = 0.97206
+   >
+   > ![image-20220524104239562](wine数据集分类结果/image-20220524104239562.png)
+
 ## PSO
 
 ### 算法大致步骤：
@@ -162,4 +175,13 @@ for j in range(self.dimension):
    >
    > ![image-20220524093834412](wine数据集分类结果/image-20220524093834412.png)
 
-5. 
+5. > 改变初始化
+
+   > 第 50 次迭代
+   > 当前最佳位置：[58.67594087  0.40936569  0.        ]
+   > params:  [58.67594087  0.40936569  0.        ]
+   > 0.9776190476190475
+   > 当前的最佳适应度：0.9776190476190475
+   > time cost:       2636.623948097229      s
+   >
+   > ![image-20220524110732371](wine数据集分类结果/image-20220524110732371.png)

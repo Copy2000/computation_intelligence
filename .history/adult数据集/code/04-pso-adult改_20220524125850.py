@@ -20,7 +20,7 @@ class HyperparameterTuningGenetic:
         self.kfold = model_selection.KFold(n_splits=self.NUM_FOLDS, shuffle=True,random_state=self.randomSeed)
 
     def initAdultDataset(self):
-        url = 'D:\大三下\智能计算\大作业\第二次\computation_intelligence\\adult数据集\data\processed_adult.csv'
+        url = 'processed_adult.csv'
 
         self.data = read_csv(url, header=None, usecols=range(0, 15))
         self.X = self.data.iloc[:, 0:13]
@@ -104,8 +104,8 @@ class PSO:
 
 
     def update(self, size):
-        c1 = 2  # 学习因子
-        c2 = 2
+        c1 = 1  # 学习因子
+        c2 = 1
         w = 0.8  # 自身权重因子
         for i in range(size):
             # 更新速度(核心公式)
@@ -162,8 +162,8 @@ class PSO:
 
 
 if __name__ == '__main__':
-    MAX_Generation = 50
-    Population = 20
+    MAX_Generation = 10
+    Population = 100
     dimension = 3
     # v_low = -1
     # v_high = 1

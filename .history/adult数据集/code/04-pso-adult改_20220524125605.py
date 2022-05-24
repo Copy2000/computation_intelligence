@@ -20,7 +20,7 @@ class HyperparameterTuningGenetic:
         self.kfold = model_selection.KFold(n_splits=self.NUM_FOLDS, shuffle=True,random_state=self.randomSeed)
 
     def initAdultDataset(self):
-        url = 'D:\大三下\智能计算\大作业\第二次\computation_intelligence\\adult数据集\data\processed_adult.csv'
+        url = 'processed_adult.csv'
 
         self.data = read_csv(url, header=None, usecols=range(0, 15))
         self.X = self.data.iloc[:, 0:13]
@@ -34,7 +34,7 @@ class HyperparameterTuningGenetic:
     # "learning_rate": float
     # "algorithm": {'SAMME', 'SAMME.R'}
     def convertParams(self, params):
-        #print("\n_estimators    learning_rate   algorithm\n",params)
+        print("\n_estimators    learning_rate   algorithm\n",params)
         n_estimators = round(params[0])  # round to nearest integer
         learning_rate = params[1]        # no conversion needed
         algorithm = ['SAMME', 'SAMME.R'][round(params[2])]  # round to 0 or 1, then use as index
@@ -42,7 +42,6 @@ class HyperparameterTuningGenetic:
 
     def getAccuracy(self, params):
         n_estimators, learning_rate, algorithm = self.convertParams(params)
-        n_estimators=int(n_estimators)
         self.classifier = AdaBoostClassifier(random_state=self.randomSeed,
                                              n_estimators=n_estimators,
                                              learning_rate=learning_rate,
@@ -104,8 +103,8 @@ class PSO:
 
 
     def update(self, size):
-        c1 = 2  # 学习因子
-        c2 = 2
+        c1 = 1  # 学习因子
+        c2 = 1
         w = 0.8  # 自身权重因子
         for i in range(size):
             # 更新速度(核心公式)
@@ -135,15 +134,12 @@ class PSO:
     def pso(self):
 
         best = []
-        i=1
         self.final_best = np.array([1, 0.5, 0])
         start_time=time.time()
         for gen in range(self.time):
             self.update(self.size)
             if self.fitness(self.g_best) > self.fitness(self.final_best):
                 self.final_best = self.g_best.copy()
-            print("the",i,"generation")
-            i+=1
             print('当前最佳位置：{}'.format(self.final_best))
             temp = self.fitness(self.final_best)
             print('当前的最佳适应度：{}'.format(temp))
@@ -162,8 +158,8 @@ class PSO:
 
 
 if __name__ == '__main__':
-    MAX_Generation = 50
-    Population = 20
+    MAX_Generation = 10
+    Population = 100
     dimension = 3
     # v_low = -1
     # v_high = 1

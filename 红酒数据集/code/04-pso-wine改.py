@@ -86,7 +86,7 @@ class PSO:
             for j in range(self.dimension):
                 self.x[i][j] = random.uniform(
                     self.bound[0][j], self.bound[1][j])
-                self.v[i][j] = random.uniform(self.v_low, self.v_high)
+                self.v[i][j] = random.uniform(self.v_low[j], self.v_high[j])
             self.p_best[i] = self.x[i]  # 储存最优的个体
             fit = self.fitness(self.p_best[i])
             # 做出修改
@@ -117,10 +117,10 @@ class PSO:
                 self.p_best[i] - self.x[i]) + c2 * random.uniform(0, 1) * (self.g_best - self.x[i])
             # 速度限制
             for j in range(self.dimension):
-                if self.v[i][j] < self.v_low:
-                    self.v[i][j] = self.v_low
-                if self.v[i][j] > self.v_high:
-                    self.v[i][j] = self.v_high
+                if self.v[i][j] < self.v_low[j]:
+                    self.v[i][j] = self.v_low[j]
+                if self.v[i][j] > self.v_high[j]:
+                    self.v[i][j] = self.v_high[j]
 
             # 更新位置
             self.x[i] = self.x[i] + self.v[i]
@@ -175,8 +175,8 @@ if __name__ == '__main__':
     MAX_Generation = 50
     Population = 20
     dimension = 3
-    v_low = -0.5
-    v_high = 0.5
+    v_low = [-10, -0.1, -0.5]
+    v_high = [10, 0.1, 0.5]
     # [n_estimators, learning_rate, algorithm]:
     BOUNDS_LOW = [1, 0.01, 0]
     BOUNDS_HIGH = [100, 1.00, 1]
@@ -188,8 +188,8 @@ if __name__ == '__main__':
     print("begin draw pso")
     print(np.array(X_list).shape)
     print(np.array(V_list).shape)
-    np.save("50_20X", arr=np.array(X_list))
-    np.save("50_20V", arr=np.array(V_list))
+    np.save("04X", arr=np.array(X_list))
+    np.save("04V", arr=np.array(V_list))
     fig, ax = plt.subplots(1, 1)
     ax.set_title('title', loc='center')
     line = ax.plot([], [], 'b.')

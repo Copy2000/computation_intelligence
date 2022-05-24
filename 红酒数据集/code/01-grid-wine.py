@@ -27,7 +27,7 @@ class HyperparameterTuningGrid:
 
     def initWineDataset(self):
         #url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data'
-        url = 'D:\大三下\计算智能\第二次\wine.csv'
+        url = 'D:\大三下\计算智能\第二次\代码及结果\红酒数据集\data\wine.csv'
         self.data = read_csv(url, header=None, usecols=range(0, 14))
         self.X = self.data.iloc[:, 1:14]
         self.y = self.data.iloc[:, 0]

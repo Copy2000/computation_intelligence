@@ -1,5 +1,36 @@
 # wine数据集分类结果
 
+## Grid Search
+
+> best parameters:  {'algorithm': 'SAMME', 'learning_rate': 0.3593813663804626, 'n_estimators': 60}
+> best score:  0.9720634920634922
+> Time Elapse: 113.00295925140381
+
+## Grid Search Based GA
+
+> Best individual is: {'n_estimators': 100, 'learning_rate': 0.3593813663804626, 'algorithm': 'SAMME'}
+> with fitness: 0.9719101123595506
+> Time Elapsed =  46.56487488746643
+
+## GA
+
+### 结果：
+
+1. > ```python
+   > POPULATION_SIZE = 10
+   > P_CROSSOVER = 0.9  # probability for crossover
+   > P_MUTATION = 0.5   # probability for mutating an individual
+   > MAX_GENERATIONS = 10
+   > HALL_OF_FAME_SIZE = 5
+   > CROWDING_FACTOR = 20.0  # crowding factor for crossover and mutation
+   > ```
+
+   > Best solution is: 
+   > params =  (67, 0.34684801135281196, 'SAMME')
+   > Accuracy = 0.97206
+   >
+   > ![image-20220524104037648](wine数据集分类结果/image-20220524104037648.png)
+
 ## PSO
 
 ### 算法大致步骤：
@@ -110,3 +141,25 @@ for j in range(self.dimension):
    > 0.9831746031746033
    > 当前的最佳适应度：0.9831746031746033
    > time cost:       1510.600219488144      s![image-20220524090749388](wine数据集分类结果/image-20220524090749388.png)
+
+4. > ################ 改变速度范围#######################
+   >
+   > MAX_Generation = 50		#迭代次数
+   > Population = 20			#种群数量
+   >
+   > v_low = [-10, -0.1, -0.5]
+   >
+   > v_high = [10, 0.1, 0.5]
+   >
+   > c1 = 2.0  # 学习因子
+   > c2 = 2.0
+   > w = 0.8
+
+   > 当前最佳位置：[17.96950042  0.88984003  0.        ]
+   > 0.9885714285714287
+   > 当前的最佳适应度：0.9885714285714287
+   > time cost:       1343.2985899448395     s
+   >
+   > ![image-20220524093834412](wine数据集分类结果/image-20220524093834412.png)
+
+5. 

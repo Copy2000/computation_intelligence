@@ -1,16 +1,57 @@
 from deap import base
 from deap import creator
 from deap import tools
-
+from sklearn import model_selection
+from sklearn.ensemble import AdaBoostClassifier
+from pandas import read_csv
 import random
 import numpy
 
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-import hyperparameter_tuning_genetic_test
 import elitism
+class HyperparameterTuningGenetic:
 
+    NUM_FOLDS = 5
+
+    def __init__(self, randomSeed):
+
+        self.randomSeed = randomSeed
+        self.initWineDataset()
+        self.kfold = model_selection.KFold(n_splits=self.NUM_FOLDS, shuffle=True,random_state=self.randomSeed)
+
+    def initWineDataset(self):
+        url = 'D:\大三下\计算智能\第二次\代码及结果\红酒数据集\data\wine.csv'
+
+        self.data = read_csv(url, header=None, usecols=range(0, 14))
+        self.X = self.data.iloc[:, 1:14]
+        self.y = self.data.iloc[:, 0]
+
+    # ADABoost [n_estimators, learning_rate, algorithm]:
+    # "n_estimators": integer
+    # "learning_rate": float
+    # "algorithm": {'SAMME', 'SAMME.R'}
+    def convertParams(self, params):
+        n_estimators = round(params[0])  # round to nearest integer
+        learning_rate = params[1]        # no conversion needed
+        algorithm = ['SAMME', 'SAMME.R'][round(params[2])]  # round to 0 or 1, then use as index
+        return n_estimators, learning_rate, algorithm
+
+    def getAccuracy(self, params):
+        n_estimators, learning_rate, algorithm = self.convertParams(params)
+        self.classifier = AdaBoostClassifier(random_state=self.randomSeed,
+                                             n_estimators=n_estimators,
+                                             learning_rate=learning_rate,
+                                             algorithm=algorithm
+                                             )
+
+        cv_results = model_selection.cross_val_score(self.classifier,
+                                                     self.X,
+                                                     self.y,
+                                                     cv=self.kfold,
+                                                     scoring='accuracy')
+        return cv_results.mean()
 # boundaries for ADABOOST parameters:
 # "n_estimators": 1..100
 # "learning_rate": 0.01..100
@@ -22,10 +63,10 @@ BOUNDS_HIGH = [100, 1.00, 1]
 NUM_OF_PARAMS = len(BOUNDS_HIGH)
 
 # Genetic Algorithm constants:
-POPULATION_SIZE = 20
+POPULATION_SIZE = 10
 P_CROSSOVER = 0.9  # probability for crossover
 P_MUTATION = 0.5   # probability for mutating an individual
-MAX_GENERATIONS = 10
+MAX_GENERATIONS = 20
 HALL_OF_FAME_SIZE = 5
 CROWDING_FACTOR = 20.0  # crowding factor for crossover and mutation
 
@@ -34,7 +75,7 @@ RANDOM_SEED = 42
 random.seed(RANDOM_SEED)
 
 # create the classifier accuracy test class:
-test = hyperparameter_tuning_genetic_test.HyperparameterTuningGenetic(RANDOM_SEED)
+test = HyperparameterTuningGenetic(RANDOM_SEED)
 
 toolbox = base.Toolbox()
 
@@ -118,7 +159,7 @@ def main():
 
     # print best solution found:
     print("- Best solution is: ")
-    print("params = ", test.formatParams(hof.items[0]))
+    print("params = ", test.convertParams(hof.items[0]))
     print("Accuracy = %1.5f" % hof.items[0].fitness.values[0])
 
     # extract statistics:

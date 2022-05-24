@@ -22,9 +22,9 @@ from matplotlib.animation import FuncAnimation
 
 # record_value = pso.record_value
 
-X_list = np.load("红酒数据集\data\03X.npy")
-V_list = np.load("红酒数据集\data\03V.npy")
-print(np.array(X_list).shape)
+X_list = np.load("03X.npy")
+V_list = np.load("03V.npy")
+Generation_size=np.array(X_list).shape[0]
 print(np.array(V_list).shape)
 
 fig, ax = plt.subplots(1, 1)
@@ -35,22 +35,22 @@ line = ax.plot([], [], 'b.')
 # Z_grid = demo_func((X_grid, Y_grid))
 # ax.contour(X_grid, Y_grid, Z_grid, 20)
 
-# ax.set_xlim(-1, 1)
-# ax.set_ylim(-1, 1)
+ax.set_xlim(-10, 110)
+ax.set_ylim(-0.1, 1.1)
 
 plt.ion()
 p = plt.show()
 
 
 def update_scatter(frame):
-    i, j = frame // 10, frame % 10
+    i, j = frame // 5, frame % 5
     ax.set_title('iter = ' + str(i))
-    X_tmp = X_list[i] + V_list[i] * j / 10.0
+    X_tmp = X_list[i] + V_list[i] * j / 5
     plt.setp(line, 'xdata', X_tmp[:, 0], 'ydata', X_tmp[:, 1])
     return line
 
 
-ani = FuncAnimation(fig, update_scatter, blit=True, interval=25, frames=300)
+ani = FuncAnimation(fig, update_scatter, blit=True, interval=50, frames=300)
 # plt.show()
 # ani.save('test.mp4',fps=25)
 

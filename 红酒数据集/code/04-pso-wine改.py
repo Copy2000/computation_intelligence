@@ -81,11 +81,23 @@ class PSO:
         self.g_best = np.zeros((1, self.dimension))[0]  # 全局最优的位置
 
         # 初始化第0代初始全局最优解
+        n_estimators_init=np.linspace(0,100,num=20)+1
+        n_estimators_init[-1]=99
+        learning_rate_init=np.logspace(-2, 0, num=20, base=10)
         temp = -1000000
         for i in range(self.size):
             for j in range(self.dimension):
-                self.x[i][j] = random.uniform(
+                # self.x[i][j] = random.uniform(
+                #     self.bound[0][j], self.bound[1][j])
+                ##################
+                if(j==0):
+                    self.x[i][j]=n_estimators_init[i]
+                if(j==1):
+                    self.x[i][j]=learning_rate_init[i]
+                if(j==2):
+                    self.x[i][j] = random.uniform(
                     self.bound[0][j], self.bound[1][j])
+                ##################
                 self.v[i][j] = random.uniform(self.v_low[j], self.v_high[j])
             self.p_best[i] = self.x[i]  # 储存最优的个体
             fit = self.fitness(self.p_best[i])

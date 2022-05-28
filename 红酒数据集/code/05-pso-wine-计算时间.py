@@ -62,7 +62,6 @@ class PSO:
     def __init__(self, dimension, time, size, low, up, v_low, v_high):
         # 初始化
         self.xall = []
-        self.vall = []
         self.dimension = dimension  # 变量个数
         self.time = time  # 迭代的代数
         self.size = size  # 种群大小
@@ -77,6 +76,10 @@ class PSO:
         self.v = np.zeros((self.size, self.dimension))  # 所有粒子的速度
         self.p_best = np.zeros((self.size, self.dimension))  # 每个粒子最优的位置
         self.g_best = np.zeros((1, self.dimension))[0]  # 全局最优的位置
+        # 记录fitness
+        self.allfitness=-1      # 记录最好个体的fitness
+        self.personalfitness=[] # 记录每个个体最好的fitness 1*population
+
 
         # 初始化第0代初始全局最优解
         temp = -1000000
@@ -84,15 +87,16 @@ class PSO:
             for j in range(self.dimension):
                 self.x[i][j] = random.uniform(
                     self.bound[0][j], self.bound[1][j])
-                self.v[i][j] = random.uniform(self.v_low, self.v_high)
+                self.v[i][j] = random.uniform(self.v_low[j], self.v_high[j])
             self.p_best[i] = self.x[i]  # 储存最优的个体
             fit = self.fitness(self.p_best[i])
+            self.personalfitness.append(fit)
             # 做出修改
             if fit > temp:
                 self.g_best = self.p_best[i]
+                self.allfitness = fit
                 temp = fit
-        self.xall.append(self.x)
-        self.vall.append(self.v)
+        self.xall.append(self.p_best)
 
     def fitness(self, x):
         # 创建分类器
@@ -115,10 +119,10 @@ class PSO:
                     self.p_best[i] - self.x[i]) + c2 * random.uniform(0, 1) * (self.g_best - self.x[i])
             # 速度限制
             for j in range(self.dimension):
-                if self.v[i][j] < self.v_low:
-                    self.v[i][j] = self.v_low
-                if self.v[i][j] > self.v_high:
-                    self.v[i][j] = self.v_high
+                if self.v[i][j] < self.v_low[j]:
+                    self.v[i][j] = self.v_low[j]
+                if self.v[i][j] > self.v_high[j]:
+                    self.v[i][j] = self.v_high[j]
 
             # 更新位置
             self.x[i] = self.x[i] + self.v[i]
@@ -129,27 +133,35 @@ class PSO:
                 if self.x[i][j] > self.bound[1][j]:
                     self.x[i][j] = self.bound[1][j]
             # 更新p_best和g_best
-            if self.fitness(self.x[i]) > self.fitness(self.p_best[i]):
+            fit = self.fitness(self.x[i])
+            if fit > self.personalfitness[i]:
                 self.p_best[i] = self.x[i]
-            if self.fitness(self.x[i]) > self.fitness(self.g_best):
+                self.personalfitness[i]=fit
+            if fit > self.allfitness:
                 self.g_best = self.x[i]
-        self.xall.append(self.x)
-        self.vall.append(self.v)
+                self.allfitness=fit
+            # if self.fitness(self.x[i]) > self.fitness(self.p_best[i]):
+            #     self.p_best[i] = self.x[i]
+            # if self.fitness(self.x[i]) > self.fitness(self.g_best):
+            #     self.g_best = self.x[i]
+        self.xall.append(self.p_best)
 
     def pso(self):
 
         best = []
-        self.final_best = np.array([1, 0.5, 0])
+        self.final_best = np.array([50, 0.5, 0])
+        final_best_fitness= self.fitness(self.final_best)
         start_time = time.time()
         i = 0
         for gen in range(self.time):
             self.update(self.size)
-            if self.fitness(self.g_best) > self.fitness(self.final_best):
+            if self.allfitness > final_best_fitness:
                 self.final_best = self.g_best.copy()
+                final_best_fitness = self.allfitness
             print("第", i + 1, "次迭代")
             i = i + 1
             print('当前最佳位置：{}'.format(self.final_best))
-            temp = self.fitness(self.final_best)
+            temp = final_best_fitness
             print('当前的最佳适应度：{}'.format(temp))
             best.append(temp)
         t = [i for i in range(self.time)]
@@ -166,44 +178,43 @@ class PSO:
         plt.show()
 
     def return_result(self):
-        return self.xall, self.vall
+        return self.xall
 
 
 if __name__ == '__main__':
-    MAX_Generation = 5
-    Population = 5
+    MAX_Generation = 10
+    Population = 10
     dimension = 3
-    v_low = -0.5
-    v_high = 0.5
+    v_low = [-5,-0.1,-0.5]
+    v_high = [5,0.1,0.5]
     # [n_estimators, learning_rate, algorithm]:
     BOUNDS_LOW = [1, 0.01, 0]
     BOUNDS_HIGH = [100, 1.00, 1]
     pso = PSO(dimension, MAX_Generation, Population,
               BOUNDS_LOW, BOUNDS_HIGH, v_low, v_high)
     pso.pso()
-    X_list, V_list = pso.return_result()
+    X_list= pso.return_result()
     # 画图==============================================
     print("begin draw pso")
     print(np.array(X_list).shape)
-    print(np.array(V_list).shape)
-    np.save("5_5", arr=np.array(X_list))
-    np.save("5_5", arr=np.array(V_list))
-    fig, ax = plt.subplots(1, 1)
-    ax.set_title('title', loc='center')
-    line = ax.plot([], [], 'b.')
-
-    ax.set_xlim(-10, 110)
-    ax.set_ylim(-0.1, 1.1)
-    plt.ion()
-    p = plt.show()
-
-
-    def update_scatter(frame):
-        i, j = frame // 10, frame % 10
-        ax.set_title('iter = ' + str(i))
-        X_tmp = X_list[i] + V_list[i] * j / 10.0
-        plt.setp(line, 'xdata', X_tmp[:, 0], 'ydata', X_tmp[:, 1])
-        return line
+    save_name=str(MAX_Generation)+'_'+str(Population)
+    np.save(save_name, arr=np.array(X_list))
+    # fig, ax = plt.subplots(1, 1)
+    # ax.set_title('title', loc='center')
+    # line = ax.plot([], [], 'b.')
+    #
+    # ax.set_xlim(-10, 110)
+    # ax.set_ylim(-0.1, 1.1)
+    # plt.ion()
+    # p = plt.show()
+    #
+    #
+    # def update_scatter(frame):
+    #     i, j = frame // 10, frame % 10
+    #     ax.set_title('iter = ' + str(i))
+    #     X_tmp = X_list[i] + V_list[i] * j / 10.0
+    #     plt.setp(line, 'xdata', X_tmp[:, 0], 'ydata', X_tmp[:, 1])
+    #     return line
 
 
     #ani = FuncAnimation(fig, update_scatter, blit=True,interval=50, frames=100)

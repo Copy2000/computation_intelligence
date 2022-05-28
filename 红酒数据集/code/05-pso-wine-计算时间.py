@@ -61,7 +61,7 @@ class HyperparameterTuningGenetic:
 class PSO:
     def __init__(self, dimension, time, size, low, up, v_low, v_high):
         # 初始化
-        self.xall = []
+        self.xall =np.zeros((time,size,dimension))
         self.dimension = dimension  # 变量个数
         self.time = time  # 迭代的代数
         self.size = size  # 种群大小
@@ -80,6 +80,8 @@ class PSO:
         self.allfitness=-1      # 记录最好个体的fitness
         self.personalfitness=[] # 记录每个个体最好的fitness 1*population
 
+        self.nowGeneration=0
+
 
         # 初始化第0代初始全局最优解
         temp = -1000000
@@ -96,7 +98,7 @@ class PSO:
                 self.g_best = self.p_best[i]
                 self.allfitness = fit
                 temp = fit
-        self.xall.append(self.p_best)
+            self.xall[self.nowGeneration].append(self.p_best[i])
 
     def fitness(self, x):
         # 创建分类器
@@ -110,6 +112,7 @@ class PSO:
         return accuracy
 
     def update(self, size):
+        self.nowGeneration+=1
         c1 = 2.0  # 学习因子
         c2 = 2.0
         w = 0.8  # 自身权重因子
@@ -140,11 +143,11 @@ class PSO:
             if fit > self.allfitness:
                 self.g_best = self.x[i]
                 self.allfitness=fit
+            self.xall[self.nowGeneration].append(self.p_best[i])
             # if self.fitness(self.x[i]) > self.fitness(self.p_best[i]):
             #     self.p_best[i] = self.x[i]
             # if self.fitness(self.x[i]) > self.fitness(self.g_best):
             #     self.g_best = self.x[i]
-        self.xall.append(self.p_best)
 
     def pso(self):
 
@@ -182,8 +185,8 @@ class PSO:
 
 
 if __name__ == '__main__':
-    MAX_Generation = 10
-    Population = 10
+    MAX_Generation = 3
+    Population = 5
     dimension = 3
     v_low = [-5,-0.1,-0.5]
     v_high = [5,0.1,0.5]

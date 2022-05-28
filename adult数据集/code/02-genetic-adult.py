@@ -21,7 +21,7 @@ class HyperparameterTuningGenetic:
         self.kfold = model_selection.KFold(n_splits=self.NUM_FOLDS, shuffle=True,random_state=self.randomSeed)
 
     def initAdultDataset(self):
-        url = 'processed_adult.csv'
+        url = 'D:\大三下\计算智能\第二次\代码及结果\\adult数据集\data\processed_adult.csv'
 
         self.data = read_csv(url, header=None, usecols=range(0, 15))
         self.X = self.data.iloc[:, 0:13]

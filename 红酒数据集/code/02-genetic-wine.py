@@ -66,7 +66,7 @@ NUM_OF_PARAMS = len(BOUNDS_HIGH)
 POPULATION_SIZE = 10
 P_CROSSOVER = 0.9  # probability for crossover
 P_MUTATION = 0.5   # probability for mutating an individual
-MAX_GENERATIONS = 20
+MAX_GENERATIONS = 10
 HALL_OF_FAME_SIZE = 5
 CROWDING_FACTOR = 20.0  # crowding factor for crossover and mutation
 

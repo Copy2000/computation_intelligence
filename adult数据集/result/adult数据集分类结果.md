@@ -2,13 +2,37 @@
 
 ## Grid Search
 
-
+> best parameters:  {'algorithm': 'SAMME.R', 'learning_rate': 1.0, 'n_estimators': 100}
+> best score:  0.8596022171503097
+> Time Elapse: 943.3204729557037
 
 ## Grid Search Based GA
 
-
+> Best individual is: {'n_estimators': 100, 'learning_rate': 1.0, 'algorithm': 'SAMME.R'}
+> with fitness: 0.8596022171503097
+> Time Elapsed =  528.7194740772247
 
 ## GA
+
+> POPULATION_SIZE = 20
+>
+> P_CROSSOVER = 0.9  # probability for crossover
+>
+> P_MUTATION = 0.3  # probability for mutating an individual
+>
+> MAX_GENERATIONS = 5
+>
+> HALL_OF_FAME_SIZE = 5
+>
+> CROWDING_FACTOR = 20.0  # crowding factor for crossover and mutation
+
+
+
+> Best solution is: 
+> params =  'n_estimators'= 91, 'learning_rate'=0.742, 'algorithm'=SAMME.R
+> Accuracy = 0.85791
+>
+> ![image-20220524233742935](adult数据集分类结果/image-20220524233742935.png)
 
 ### 结果：
 

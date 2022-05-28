@@ -27,7 +27,7 @@ class HyperparameterTuningGrid:
 
     def initAdultDataset(self):
         # url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data'
-        url = 'D:\大三下\计算智能\第二次\代码及结果\\processed_adult.csv'
+        url = 'D:\大三下\计算智能\第二次\代码及结果\\adult数据集\data\processed_adult.csv'
         # self.data = read_csv(url, header=None, usecols=range(0, 12))
         # self.X = self.data.iloc[:, 0:10]
         # self.y = self.data.iloc[:, 11]

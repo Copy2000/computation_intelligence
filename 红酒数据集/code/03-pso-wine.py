@@ -102,7 +102,7 @@ class PSO:
         个体适应值计算
         """
         test = HyperparameterTuningGenetic(self.random)
-        print("params:\t", x)
+        #print("params:\t", x)
         accuracy = test.getAccuracy(x)
         print(accuracy)
         return accuracy
@@ -123,7 +123,11 @@ class PSO:
                     self.v[i][j] = self.v_high
 
             # 更新位置
+            print("更新前：")
+            print(self.x[i])
             self.x[i] = self.x[i] + self.v[i]
+            print("更新后：")
+            print(self.x[i])
             # 位置限制
             for j in range(self.dimension):
                 if self.x[i][j] < self.bound[0][j]:
@@ -172,8 +176,8 @@ class PSO:
 
 
 if __name__ == '__main__':
-    MAX_Generation = 50
-    Population = 20
+    MAX_Generation = 10
+    Population = 10
     dimension = 3
     v_low = -0.5
     v_high = 0.5

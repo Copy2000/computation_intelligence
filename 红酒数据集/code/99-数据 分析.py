@@ -1,8 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from sko.PSO import PSO
 from matplotlib.animation import FuncAnimation
-X_list = np.load("10_10.npy")
+X_list = np.load("3_5.npy")
 fig, ax = plt.subplots(1, 1)
 ax.set_title('10_10', loc='center')
 line = ax.plot([], [], 'b.')

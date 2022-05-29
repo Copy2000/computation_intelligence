@@ -17,31 +17,33 @@ class HyperparameterTuningGenetic:
 
     def __init__(self, randomSeed):
         self.randomSeed = randomSeed
-        self.initWineDataset()
-        self.kfold = model_selection.KFold(
-            n_splits=self.NUM_FOLDS, shuffle=True, random_state=self.randomSeed)
+        self.initAdultDataset()
+        self.kfold = model_selection.KFold(n_splits=self.NUM_FOLDS, shuffle=True, random_state=self.randomSeed)
 
-    def initWineDataset(self):
-        url = '..\data\wine.csv'
+    def initAdultDataset(self):
+        url = '..\data\processed_adult.csv'
 
-        self.data = read_csv(url, header=None, usecols=range(0, 14))
-        self.X = self.data.iloc[:, 1:14]
-        self.y = self.data.iloc[:, 0]
+        self.data = read_csv(url, header=None, usecols=range(0, 15))
+        self.X = self.data.iloc[:, 0:13]
+        self.y = self.data.iloc[:, 14]
+        # self.data = read_csv(url, header=None, usecols=range(0, 12))
+        # self.X = self.data.iloc[:, 0:10]
+        # self.y = self.data.iloc[:, 11]
 
     # ADABoost [n_estimators, learning_rate, algorithm]:
     # "n_estimators": integer
     # "learning_rate": float
     # "algorithm": {'SAMME', 'SAMME.R'}
     def convertParams(self, params):
+        # print("\n_estimators    learning_rate   algorithm\n",params)
         n_estimators = round(params[0])  # round to nearest integer
         learning_rate = params[1]  # no conversion needed
-        # round to 0 or 1, then use as index
-        algorithm = ['SAMME', 'SAMME.R'][round(params[2])]
-        # print("param[2]:\t",params[2],"\talgorithm:\t",algorithm)
+        algorithm = ['SAMME', 'SAMME.R'][round(params[2])]  # round to 0 or 1, then use as index
         return n_estimators, learning_rate, algorithm
 
     def getAccuracy(self, params):
         n_estimators, learning_rate, algorithm = self.convertParams(params)
+        n_estimators = int(n_estimators)
         self.classifier = AdaBoostClassifier(random_state=self.randomSeed,
                                              n_estimators=n_estimators,
                                              learning_rate=learning_rate,
@@ -187,8 +189,8 @@ class PSO:
 
 
 if __name__ == '__main__':
-    MAX_Generation = 100
-    Population = 20
+    MAX_Generation = 50
+    Population = 10
     dimension = 3
     v_low = [-5, -0.1, -0.5]
     v_high = [5, 0.1, 0.5]

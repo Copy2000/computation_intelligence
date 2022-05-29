@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-X=np.load('100_20.npy')
+X=np.load('50_10.npy')
 # the correlation between n_estimators and learning rate
 plt.ion()
 plt.subplots()

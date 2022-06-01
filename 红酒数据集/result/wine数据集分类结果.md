@@ -186,6 +186,8 @@ for j in range(self.dimension):
    > 
    > ![image-20220524110732371](wine数据集分类结果/image-20220524110732371.png)
 
+   接下来都是改进算法之后的结果：
+
 6. > ```python
    > MAX_Generation = 20
    > Population = 100
@@ -217,3 +219,20 @@ for j in range(self.dimension):
    > time cost:	 330.937979221344 	s
    >
    > ![iteration](wine数据集分类结果/image-20220529103538460.png)
+
+8. > ```python
+   > MAX_Generation = 50
+   > Population = 30
+   > dimension = 3
+   > v_low = [-3, -0.03, -1]
+   > v_high = [3, 0.03, 1]
+   > c1 = 2.0  # 学习因子
+   > c2 = 2.0
+   > w = 0.8  # 自身权重因子
+   > ```
+
+   > 当前最佳位置：[39.37183712  0.72128061  0.63672477]
+   > 当前的最佳适应度：0.9887301587301588
+   > time cost:	 415.8610577583313 	s
+   >
+   > ![iteration](wine数据集分类结果/image-20220601163919396.png)

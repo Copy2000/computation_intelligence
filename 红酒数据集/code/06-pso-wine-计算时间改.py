@@ -187,11 +187,11 @@ class PSO:
 
 
 if __name__ == '__main__':
-    MAX_Generation = 100
-    Population = 20
+    MAX_Generation = 50
+    Population = 30
     dimension = 3
-    v_low = [-5, -0.1, -0.5]
-    v_high = [5, 0.1, 0.5]
+    v_low = [-3, -0.03, -1]
+    v_high = [3, 0.03, 1]
     # [n_estimators, learning_rate, algorithm]:
     BOUNDS_LOW = [1, 0.01, 0]
     BOUNDS_HIGH = [100, 1.00, 1]

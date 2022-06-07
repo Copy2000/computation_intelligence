@@ -60,7 +60,7 @@ class HyperparameterTuningGenetic:
 
 
 class PSO:
-    def __init__(self, dimension, time, size, low, up, v_low, v_high):
+    def __init__(self, dimension, time, size, low, up, v_low, v_high,active_proportion):
         # 初始化
         self.xall = np.zeros((time + 1, size, dimension))
         self.dimension = dimension  # 变量个数
@@ -72,6 +72,7 @@ class PSO:
         self.v_low = v_low
         self.v_high = v_high
         self.random = 42
+        self.active_proportion=active_proportion
         # 只有size*5的矩阵，相当于一列为一个参数的粒子
         self.x = np.zeros((self.size, self.dimension))  # 所有粒子的位置
         self.v = np.zeros((self.size, self.dimension))  # 所有粒子的速度
@@ -119,15 +120,20 @@ class PSO:
         c2 = 2.0
         w = 0.8  # 自身权重因子
         for i in range(size):
+            # 判断是否为性格激进的粒子
+            if(i<=size*self.active_proportion):
+                active_coefficient = 1.5
+            else:
+                active_coefficient=1
             # 更新速度(核心公式)
             self.v[i] = w * self.v[i] + c1 * random.uniform(0, 1) * (
                     self.p_best[i] - self.x[i]) + c2 * random.uniform(0, 1) * (self.g_best - self.x[i])
             # 速度限制
             for j in range(self.dimension):
                 if self.v[i][j] < self.v_low[j]:
-                    self.v[i][j] = self.v_low[j]
+                    self.v[i][j] = self.v_low[j]*active_coefficient
                 if self.v[i][j] > self.v_high[j]:
-                    self.v[i][j] = self.v_high[j]
+                    self.v[i][j] = self.v_high[j]*active_coefficient
 
             # 更新位置
             self.x[i] = self.x[i] + self.v[i]
@@ -193,19 +199,20 @@ if __name__ == '__main__':
     MAX_Generation = 50
     Population = 30
     dimension = 3
+    active_proportion=0.5
     v_low = [-3, -0.03, -1]
     v_high = [3, 0.03, 1]
     # [n_estimators, learning_rate, algorithm]:
     BOUNDS_LOW = [1, 0.01, 0]
     BOUNDS_HIGH = [100, 1.00, 1]
     pso = PSO(dimension, MAX_Generation, Population,
-              BOUNDS_LOW, BOUNDS_HIGH, v_low, v_high)
+              BOUNDS_LOW, BOUNDS_HIGH, v_low, v_high,active_proportion)
     pso.pso()
     X_list = pso.return_result()
     # 画图==============================================
     print("begin draw pso")
     print(np.array(X_list).shape)
-    save_name = str(MAX_Generation) + '_' + str(Population)
+    save_name = 'active_pso_'+str(MAX_Generation) + '_' + str(Population)
     np.save(save_name, arr=np.array(X_list))
     # fig, ax = plt.subplots(1, 1)
     # ax.set_title('title', loc='center')

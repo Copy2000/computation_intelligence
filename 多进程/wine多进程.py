@@ -2,12 +2,12 @@ from sklearn import model_selection
 from sklearn.ensemble import AdaBoostClassifier
 import time
 from pandas import read_csv
-import math
 import random
 import numpy as np
 import matplotlib.pyplot as plt
 import pylab as mpl
-from matplotlib.animation import FuncAnimation
+import concurrent.futures
+
 
 mpl.rcParams['font.sans-serif'] = ['SimHei']
 
@@ -82,6 +82,8 @@ class PSO:
         self.personalfitness = []  # 记录每个个体最好的fitness 1*population
         # 当前迭代次数
         self.nowgeneration = 1
+        #当前的fitness
+        self.nowfitness=[]
 
         # 初始化第0代初始全局最优解
         temp = -1000000
@@ -109,89 +111,82 @@ class PSO:
         个体适应值计算
         """
         test = HyperparameterTuningGenetic(self.random)
-        print("params:\t", x)
+        #print("params:\t", x)
         accuracy = test.getAccuracy(x)
-        print(accuracy)
+        #print(accuracy)
         return accuracy
-
-    def update(self, size):
+    # 多线程
+    def multiprocess_fitness(self,i):
         c1 = 2.0  # 学习因子
         c2 = 2.0
         w = 0.8  # 自身权重因子
-        for i in range(size):
-            # 更新速度(核心公式)
-            self.v[i] = w * self.v[i] + c1 * random.uniform(0, 1) * (
-                    self.p_best[i] - self.x[i]) + c2 * random.uniform(0, 1) * (self.g_best - self.x[i])
-            # 速度限制
-            for j in range(self.dimension):
-                if self.v[i][j] < self.v_low[j]:
-                    self.v[i][j] = self.v_low[j]
-                if self.v[i][j] > self.v_high[j]:
-                    self.v[i][j] = self.v_high[j]
+        # 更新速度(核心公式)
+        self.v[i] = w * self.v[i] + c1 * random.uniform(0, 1) * (
+                self.p_best[i] - self.x[i]) + c2 * random.uniform(0, 1) * (self.g_best - self.x[i])
+        # 速度限制
+        for j in range(self.dimension):
+            if self.v[i][j] < self.v_low[j]:
+                self.v[i][j] = self.v_low[j]
+            if self.v[i][j] > self.v_high[j]:
+                self.v[i][j] = self.v_high[j]
+        # 更新位置
+        self.x[i] = self.x[i] + self.v[i]
+        # 位置限制
+        for j in range(self.dimension):
+            if self.x[i][j] < self.bound[0][j]:
+                self.x[i][j] = self.bound[0][j]
+            if self.x[i][j] > self.bound[1][j]:
+                self.x[i][j] = self.bound[1][j]
+            self.xall[self.nowgeneration][i][j] = self.x[i][j]
+        # 返回当前适应度
+        fit = self.fitness(self.x[i])
+        return fit
 
-            # 更新位置
-            self.x[i] = self.x[i] + self.v[i]
+    def multiprocess_update(self):
+        with concurrent.futures.ProcessPoolExecutor() as executor:
+            results = [executor.submit(self.multiprocess_fitness, i) for i in range(self.size)]
+            for f in concurrent.futures.as_completed(results):
+                print(f.result())
+                # 更新p_best和g_best
+                # type <class 'numpy.float64'>
+                fit = f.result()
+                self.nowfitness.append(fit)
 
-            # 位置限制
-            for j in range(self.dimension):
-                if self.x[i][j] < self.bound[0][j]:
-                    self.x[i][j] = self.bound[0][j]
-                if self.x[i][j] > self.bound[1][j]:
-                    self.x[i][j] = self.bound[1][j]
-                self.xall[self.nowgeneration][i][j] = self.x[i][j]
-            # 更新p_best和g_best
-            fit = self.fitness(self.x[i])
-            if fit > self.personalfitness[i]:
-                self.p_best[i] = self.x[i]
-                self.personalfitness[i] = fit
-            if fit > self.allfitness:
-                self.g_best = self.x[i]
-                self.allfitness = fit
-            # if self.fitness(self.x[i]) > self.fitness(self.p_best[i]):
-            #     self.p_best[i] = self.x[i]
-            # if self.fitness(self.x[i]) > self.fitness(self.g_best):
-            #     self.g_best = self.x[i]
 
-    def pso(self):
-
+    def multiprocess_pso(self):
         best = []
         self.final_best = np.array([50, 0.5, 0])
         final_best_fitness = self.fitness(self.final_best)
-        start_time = time.time()
         for gen in range(self.time):
-            begin=time.time()
-            self.update(self.size)
-            end = time.time()
-            print(f'update cost {end-begin}')
+            print(f'generation {gen}')
+            process_begin=time.time()
+            self.multiprocess_update()
+            for s in range(self.size):
+                if self.nowfitness[s] > self.personalfitness[s]:
+                    self.p_best[s] = self.x[s]
+                    self.personalfitness[s] = self.nowfitness[s]
+                if self.nowfitness[s] > self.allfitness:
+                    self.g_best = self.x[s]
+                    self.allfitness = self.nowfitness[s]
+            self.nowfitness=[]
+            process_end = time.time()
             if self.allfitness > final_best_fitness:
                 self.final_best = self.g_best.copy()
                 final_best_fitness = self.allfitness
             print("第", self.nowgeneration, "次迭代")
-            self.nowgeneration += 1
+            self.nowgeneration+=1
+            print(f'time cost {process_end-process_begin}')
             print('当前最佳位置：{}'.format(self.final_best))
             temp = final_best_fitness
             print('当前的最佳适应度：{}'.format(temp))
             best.append(temp)
-        t = [i for i in range(self.time)]
-        end_time = time.time()
-        print("time cost:\t", end_time - start_time, '\ts')
-
-        plt.figure()
-        plt.plot(t, best, color='red', marker='.', ms=15)
-        plt.rcParams['axes.unicode_minus'] = False
-        plt.margins(0)
-        plt.xlabel(u"迭代次数")  # X轴标签
-        plt.ylabel(u"适应度")  # Y轴标签
-        plt.title(u"迭代过程")  # 标题
-        plt.show()
-
     def return_result(self):
         return self.xall
 
 
 if __name__ == '__main__':
     MAX_Generation = 50
-    Population = 30
+    Population = 5
     dimension = 3
     v_low = [-3, -0.03, -1]
     v_high = [3, 0.03, 1]
@@ -200,7 +195,8 @@ if __name__ == '__main__':
     BOUNDS_HIGH = [100, 1.00, 1]
     pso = PSO(dimension, MAX_Generation, Population,
               BOUNDS_LOW, BOUNDS_HIGH, v_low, v_high)
-    pso.pso()
+    #pso.pso()
+    pso.multiprocess_pso()
     X_list = pso.return_result()
     # 画图==============================================
     print("begin draw pso")

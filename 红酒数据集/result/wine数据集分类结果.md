@@ -186,9 +186,16 @@ for j in range(self.dimension):
    > 
    > ![image-20220524110732371](wine数据集分类结果/image-20220524110732371.png)
 
-   接下来都是改进算法之后的结果：
+   
 
-6. > ```python
+   
+
+
+#### 改进后结果
+
+接下来都是改进算法之后的结果：
+
+1. > ```python
    > MAX_Generation = 20
    > Population = 100
    > dimension = 3
@@ -205,7 +212,7 @@ for j in range(self.dimension):
    >
    > ![iteration](wine数据集分类结果/image-20220529102019254.png)
 
-7. >   MAX_Generation = 100
+2. >   MAX_Generation = 100
    > Population = 20
    > dimension = 3
    > v_low = [-5, -0.1, -0.5]
@@ -220,7 +227,7 @@ for j in range(self.dimension):
    >
    > ![iteration](wine数据集分类结果/image-20220529103538460.png)
 
-8. > ```python
+3. > ```python
    > MAX_Generation = 50
    > Population = 30
    > dimension = 3
@@ -236,3 +243,26 @@ for j in range(self.dimension):
    > time cost:	 415.8610577583313 	s
    >
    > ![iteration](wine数据集分类结果/image-20220601163919396.png)
+
+4. > ```python
+   > MAX_Generation = 50
+   > Population = 30
+   > dimension = 3
+   > active_proportion=0.5
+   > v_low = [-3, -0.03, -1]
+   > v_high = [3, 0.03, 1]
+   > # [n_estimators, learning_rate, algorithm]:
+   > BOUNDS_LOW = [1, 0.01, 0]
+   > BOUNDS_HIGH = [100, 1.00, 1]
+   > ```
+   >
+   > active_proportion即为一个种群中激进性格粒子的比例，如果为激进粒子，则速度变化为普通粒子的1.5倍
+
+   > 当前最佳位置：[18.09750652  0.92165084  0.        ]
+   > 当前的最佳适应度：0.9885714285714287
+   > time cost:	 230.60394835472107 	s
+   >
+   > ![iteration](wine数据集分类结果/image-20220607232044594.png)
+   >
+   > 更快的就收敛了
+
